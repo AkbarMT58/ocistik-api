@@ -55,7 +55,7 @@ func InsertKontak(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nama := r.FormValue("nama")
-	phone_number := r.FormValue("email")
+	phone_number := r.FormValue("phone_number")
 	email := r.FormValue("email")
 	pesan := r.FormValue("pesan")
 
@@ -95,7 +95,7 @@ func UpdateKontak(w http.ResponseWriter, r *http.Request) {
 
 	id := r.FormValue("id")
 	nama := r.FormValue("nama")
-	phone_number := r.FormValue("email")
+	phone_number := r.FormValue("phone_number")
 	email := r.FormValue("email")
 	pesan := r.FormValue("pesan")
 	update_date := now

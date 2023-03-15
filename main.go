@@ -34,10 +34,14 @@ func main() {
 	api := router.PathPrefix("/api").Subrouter()
 	api.HandleFunc("/getArtikel", controllers.AllArtikel).Methods(http.MethodGet)
 
-	api.HandleFunc("/getArtikelbyslug/{slug}", controllers.Artikelbyslug).Methods(http.MethodGet)
+	api.HandleFunc("/getArtikelbyId/{id}", controllers.ArtikelbyId).Methods(http.MethodGet)
+	api.HandleFunc("/getSearchArtikel", controllers.SearchArtikel).Methods(http.MethodPost)
+	api.HandleFunc("/getArtikelbySlug/{slug}", controllers.ArtikelbySlug).Methods(http.MethodGet)
 	api.HandleFunc("/insertArtikel", controllers.InsertArtikel).Methods(http.MethodPost)
 	api.HandleFunc("/updateArtikel", controllers.UpdateArtikel).Methods(http.MethodPut)
 	api.HandleFunc("/deleteArtikel", controllers.DeleteArtikel).Methods(http.MethodDelete)
+
+	api.HandleFunc("/upload/{url_path}", controllers.LoadImageFromURL).Methods(http.MethodGet)
 
 	api.HandleFunc("/getKontak", controllers.AllKontak).Methods(http.MethodGet)
 	api.HandleFunc("/insertKontak", controllers.InsertKontak).Methods(http.MethodPost)
@@ -45,11 +49,13 @@ func main() {
 	api.HandleFunc("/deleteKontak", controllers.DeleteKontak).Methods(http.MethodDelete)
 
 	api.HandleFunc("/getPenulis", controllers.AllPenulis).Methods(http.MethodGet)
+	api.HandleFunc("/getPenulisbyid/{id}", controllers.PenulisbyId).Methods(http.MethodGet)
 	api.HandleFunc("/insertPenulis", controllers.InsertPenulis).Methods(http.MethodPost)
 	api.HandleFunc("/updatePenulis", controllers.UpdatePenulis).Methods(http.MethodPut)
 	api.HandleFunc("/deletePenulis", controllers.DeletePenulis).Methods(http.MethodDelete)
 
 	api.HandleFunc("/getEditor", controllers.AllEditor).Methods(http.MethodGet)
+	api.HandleFunc("/getEditorbyid/{id}", controllers.EditorbyId).Methods(http.MethodGet)
 	api.HandleFunc("/insertEditor", controllers.InsertEditor).Methods(http.MethodPost)
 	api.HandleFunc("/updateEditor", controllers.UpdateEditor).Methods(http.MethodPut)
 	api.HandleFunc("/deleteEditor", controllers.DeleteEditor).Methods(http.MethodDelete)

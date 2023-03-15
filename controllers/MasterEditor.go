@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // READ ALL EDITOR
@@ -25,7 +27,46 @@ func AllEditor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&Editor.Nama_editor)
+		err = rows.Scan(&Editor.Id, &Editor.Nama_editor, &Editor.Created_date, &Editor.Updated_date, &Editor.Deleted_date)
+		if err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrEditor = append(arrEditor, Editor)
+		}
+	}
+
+	Responses_editor.Status = 200
+	Responses_editor.Message = "SUCCESS"
+	Responses_editor.Data = arrEditor
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	json.NewEncoder(w).Encode(Responses_editor)
+}
+
+// READ ALL ARTIKEL BY ID
+func EditorbyId(w http.ResponseWriter, r *http.Request) {
+	var Editor models.Master_editor
+	var Responses_editor models.Responses_editor
+	var arrEditor []models.Master_editor
+
+	db := config.ConnectDB()
+	defer db.Close()
+
+	params := r.URL
+
+	vars := mux.Vars(r)
+	id_ := vars["id"]
+
+	fmt.Println(`url := `, params)
+
+	rows, err := db.Query("SELECT * FROM master_editor where id=?", id_)
+	if err != nil {
+		log.Print(err)
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&Editor.Id, &Editor.Nama_editor, &Editor.Created_date, &Editor.Updated_date, &Editor.Deleted_date)
 		if err != nil {
 			log.Fatal(err.Error())
 		} else {
@@ -44,7 +85,11 @@ func AllEditor(w http.ResponseWriter, r *http.Request) {
 
 // INSERT EDITOR
 func InsertEditor(w http.ResponseWriter, r *http.Request) {
-	var responses models.Responses_penulis
+	var responses models.Responses_editor
+
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	//set timezone,
+	now := time.Now().In(loc)
 
 	db := config.ConnectDB()
 	defer db.Close()
@@ -55,7 +100,7 @@ func InsertEditor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nama_editor := r.FormValue("nama_editor")
-	created_date := r.FormValue("created_date")
+	created_date := now
 
 	_, err = db.Exec("INSERT INTO master_editor(nama_editor,created_date) VALUES(?,?)", nama_editor, created_date)
 	if err != nil {
@@ -74,7 +119,7 @@ func InsertEditor(w http.ResponseWriter, r *http.Request) {
 
 // UPDATE EDITOR
 func UpdateEditor(w http.ResponseWriter, r *http.Request) {
-	var responses models.Responses_kontak
+	var responses models.Responses_editor
 
 	loc, _ := time.LoadLocation("Asia/Jakarta")
 	//set timezone,
@@ -90,10 +135,10 @@ func UpdateEditor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.FormValue("id")
-	nama_editor := r.FormValue("nama_penulis")
+	nama_editor := r.FormValue("nama_editor")
 	updated_date := now
 
-	_, err = db.Exec("UPDATE master_editor SET nama_editor=? updated_date=?  WHERE id=?", nama_editor, updated_date, id)
+	_, err = db.Exec("UPDATE master_editor SET nama_editor=? , updated_date=?  WHERE id=?", nama_editor, updated_date, id)
 	if err != nil {
 		log.Print(err)
 	}
